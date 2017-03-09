@@ -10,59 +10,80 @@
 library(shiny)
 library(shinydashboard)
 library(rhandsontable)
-#library(emojifont)
+library(Hmisc)
 #devtools::install_github("dill/emoGG")
+
+source('demo.R')
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage(
-
-   dashboardHeader(
-     title = "R-Ladies Shiny Demo"
-   ),
-   dashboardSidebar(
-     p("This is a demonstration about how to use Shiny."),
-     sliderInput("dog", "Dogs", value = 0, min = 0, max = 10, step = 1),
-     sliderInput("cat", "Cats", value = 0, min = 0, max = 10, step = 1),
-     sliderInput("chicken", "Chickens", value = 0, min = 0, max = 10, step = 1),
-     actionButton("goPlot", "Update Plot")
-   ),
-   dashboardBody(
-     rHandsontableOutput("notsure"),
-     plotOutput("animals")
-   )
+  skin = "red",
+  
+  dashboardHeader(
+    title = "R-Ladies Shiny Demo"
+  ),
+  dashboardSidebar(
+    p("Shiny basics"),
+    checkboxInput("manyChickens", "Check box to see all those chickens"),
+    actionButton("goPlot", "Update Plot"),
+    sliderInput("chicken", "Chickens", value = 0, min = 0, max = 10, step = 1),
+    sliderInput("pig", "Pigs", value = 0, min = 0, max = 10, step = 1),
+    sliderInput("cow", "Cows", value = 0, min = 0, max = 10, step = 1)
+  ),
+  dashboardBody(
+    conditionalPanel(
+      condition = "input.manyChickens == true",
+      tags$video(src = "allthosechickens.mp4", type = "video/mp4",
+                 width = "350px", height = "350px", controls = "controls")
+    ),
+    rHandsontableOutput("notsure"),
+    plotOutput("animals")
+  )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
   anTab <- eventReactive(input$goPlot, {
-    animal.df <- data.frame(animal = c("Dogs", "Cats", "Chickens"),
-                            n  = c(input$dog, input$cat, input$chicken),
-                            sym = c("1f436", "1f431", "1f414"))
-
+    animal.df <- data.frame(animal = Cs(Chickens, Pigs, Cows),
+                            n  = c(input$chicken, input$pig, input$cow),
+                            sym = c("1f414", "1f437", "1f42E"))
+    
     # animal.df <- data.frame(animal = c("Dogs", "Cats", "Chickens"),
     #                         n  = c(input$dog, input$cat, input$chicken),
     #                         sym = c(emoji('dog'), emoji('cat'), emoji("chicken")))
     # 
-    animal.df <- animal.df[apply(animal.df, MARGIN = 1, function(x) x['n'] > 0),]
+    #animal.df <- animal.df[apply(animal.df, MARGIN = 1, function(x) x['n'] > 0),]
     
     return(animal.df)
   })
-
+  
   output$animals <- renderPlot({
     if(input$goPlot == 0){
-      ggplot() + geom_blank() + xlim(-3, 3) + ylim(-3, 3)
+      data <- data.frame(x = runif(1), y = runif(1))
+      ggblank(data)
     }else{
-      # ggplot() + geom_emoji('dog', anDat$n[1]) + geom_emoji('cat', anDat$n[2]) + 
-      #   theme_classic() + ylim(0, max(anDat$n)) + ggtitle("The Farm")
+      anDat <- anTab()
       
-      # x = seq(0, 2*pi, length=30)
-      # y = sin(x)
-      # ggplot() + geom_emoji('heartbeat', x=x, y=y, size=10)
+      ind <- cumsum(anDat$n)
       
-      ggplot(aes(rnorm(anDat$n[1]), rnorm(anDat$n[1]))) + geom_point() #emoGG::geom_emoji(emoji = '1f436
+      nanimals <- sum(anDat$n)
+      data <- data.frame(x = runif(nanimals), y = runif(nanimals))
+      
+      
+      p <- ggblank(data)
+      if(anDat[anDat$animal == 'Chickens','n'] > 0){
+        p <- p + emoGG::geom_emoji(data = data[1:ind[1],], emoji='1f414') #chickens
+      }
+      if(anDat[anDat$animal == 'Pigs','n'] > 0){
+        p <- p + emoGG::geom_emoji(data = data[(ind[1] + 1):ind[2],], emoji='1f437') #pigs
+      }
+      if(anDat[anDat$animal == 'Cows','n'] > 0){
+        p <- p + emoGG::geom_emoji(data = data[(ind[2] + 1):ind[3],], emoji='1f42e') #cows
+      }
+      p
     }
-  })
+  }, height = 500, width = 500)
 }
 
 # Run the application 
