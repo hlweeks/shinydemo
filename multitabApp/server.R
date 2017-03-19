@@ -1,5 +1,6 @@
 library('shiny')
 library('shinydashboard')
+library('ggplot2')
 library('rhandsontable')
 
 #################################
@@ -14,6 +15,7 @@ ggblank <- function(data){
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
+          #panel.background = element_rect(fill = "grey50"),
           panel.background = element_blank(),
           axis.text.x=element_blank(),
           axis.text.y=element_blank(),
@@ -21,22 +23,16 @@ ggblank <- function(data){
           axis.ticks.y=element_blank(),
           plot.title = element_text(hjust = 0.5),
           legend.position = 'none') +
-    xlab("") + ylab("") + ggtitle("Welcome to the Farm")
+    xlab("") + ylab("") + ggtitle("")
 }
 #################################
 
-server <- function(input, output) {
+shinyServer(function(input, output) {
   
   anTab <- eventReactive(input$goPlot, {
     animal.df <- data.frame(animal = c("Chickens", "Pigs", "Cows"),
                             n  = c(input$chicken, input$pig, input$cow),
                             sym = c("1f414", "1f437", "1f42E"))
-    
-    # animal.df <- data.frame(animal = c("Dogs", "Cats", "Chickens"),
-    #                         n  = c(input$dog, input$cat, input$chicken),
-    #                         sym = c(emoji('dog'), emoji('cat'), emoji("chicken")))
-    # 
-    #animal.df <- animal.df[apply(animal.df, MARGIN = 1, function(x) x['n'] > 0),]
     
     return(animal.df)
   })
@@ -67,4 +63,4 @@ server <- function(input, output) {
       p
     }
   }, height = 500, width = 500)
-}
+})
