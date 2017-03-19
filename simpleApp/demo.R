@@ -1,7 +1,7 @@
 library('ggplot2')
 
 #Function to produce blank ggplot window
-ggblank <- function(data){
+ggblank <- function(data, title = "all the animals"){
   ggplot(data, aes(x, y)) + 
     geom_rect(aes(xmax = 1.1, xmin = -0.1, ymax = 1.1, ymin = -0.1, fill = 'none'), 
               color = 'black', alpha = 0) +
@@ -15,7 +15,7 @@ ggblank <- function(data){
           axis.ticks.y=element_blank(),
           plot.title = element_text(hjust = 0.5),
           legend.position = 'none') +
-    xlab("") + ylab("") + ggtitle("The Farm")
+    xlab("") + ylab("") + ggtitle(title)
 }
 
 

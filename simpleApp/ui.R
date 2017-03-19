@@ -29,8 +29,11 @@ ui <- dashboardPage(
       menuItem(HTML("Click here to learn more<br>about shinydashboard"), 
                icon = icon("book"), badgeColor = "yellow",
                # Link to another website
-               href = "https://rstudio.github.io/shinydashboard/structure.html")
-    ),
+               href = "https://rstudio.github.io/shinydashboard/structure.html"),
+      # Link to my github repo for this application
+      menuItem("Source code", icon = icon("file-code-o"), 
+               href = "https://github.com/hlweeks/shinydemo/tree/master/simpleApp")
+      ),
     
     # Plain text ('p' means new paragraph)
     p("Choose some animals"),
