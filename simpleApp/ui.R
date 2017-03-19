@@ -21,7 +21,9 @@ ui <- dashboardPage(
     #    so text/inputs aren't flush with the browser edge
     # HTML tags help with formatting and media
     # All `tags` options: https://shiny.rstudio.com/articles/tag-glossary.html
-    tags$head(tags$style(HTML(".sidebar { margin-left: 5px; }"))),
+    tags$head(tags$style(HTML(".sidebar { margin-left: 5px; }"), 
+                         # Sidebar is longer than main panel
+                         HTML(".wrapper {overflow: visible !important;}"))),
     
     # Creates a little area with menu items
     sidebarMenu(
@@ -85,6 +87,8 @@ ui <- dashboardPage(
     ),
     # Insert some extra space at the bottom using HTML code,
     #     otherwise my plot looks like it's running off the page
-    HTML("<div style='height: 100px;'>")
+    # Also, the sidebar panel was longer than the main panel 
+    #     so there was awkward white space and this prevents that
+    HTML("<div style='height: 150px;'>")
   )
 )
