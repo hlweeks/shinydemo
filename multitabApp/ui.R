@@ -13,8 +13,8 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
                         margin-left:10px; width: 100%;
                         }')),
   # Name of the tab that is selected by default
-  selected = "Tab1",
-  tabPanel("Tab1",
+  selected = "datasets",
+  tabPanel("datasets",
            # Prevent error that very briefly appears
            tags$style(type="text/css",
                       ".shiny-output-error { visibility: hidden; }",
@@ -23,7 +23,8 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
            sidebarLayout(
              sidebarPanel(
                selectInput("data", "Choose a data set", choices = dat_names, selected = "trees"),
-               textOutput("data_info")
+               textOutput("data_info"),
+               downloadLink("download", "Download as csv")
              ),
              mainPanel(
                uiOutput("variables"),
@@ -31,25 +32,32 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
              )  
            )
   ),
-  tabPanel("Tab2",
+  tabPanel("More Things!",
            sidebarLayout(
              sidebarPanel(
-
+               fileInput('file', 'Choose csv file',
+                         accept=c('text/csv', 
+                                  'text/comma-separated-values,text/plain', 
+                                  '.csv')),
+               checkboxInput("header", "Header", TRUE),
+               actionButton("wait", "Click to wait 5 seconds")
              ),
              mainPanel(
-               fluidRow(
-                 column(width = 6,
-                        h4("Table title"),
-                        rHandsontableOutput("rhot1")
-                        ),
-                 column(width = 6,
-                        h4("Table title"),
-                        rHandsontableOutput("rhot2")
-                 )
-               )
+               textOutput("title"),
+               tableOutput("summary"),
+               rHandsontableOutput("rhot")
              )
            )
 
+  ),
+  tabPanel("Correlation Example",
+           sidebarLayout(
+             sidebarPanel(
+               numericInput("n_obs", "Number of Observations", min = 0, value = 10),
+               sliderInput("corr", "Correlation", min = -1, max = 1, step = .1, value = 0),
+               textInput("title", "Plot title")),
+             mainPanel(plotOutput("corPlot"))
+           )
   )
 )
 )
