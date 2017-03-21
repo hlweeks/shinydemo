@@ -2,6 +2,7 @@ library('shiny')
 library('shinydashboard')
 library('rhandsontable')
 
+source('demo.R')
 
 shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
   # CSS file from 'www' folder that contains details for formatting, layout                 
@@ -14,19 +15,26 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
   # Name of the tab that is selected by default
   selected = "Tab1",
   tabPanel("Tab1",
+           # Prevent error that very briefly appears
+           tags$style(type="text/css",
+                      ".shiny-output-error { visibility: hidden; }",
+                      ".shiny-output-error:before { visibility: hidden; }"),
+           
            sidebarLayout(
              sidebarPanel(
-               #selectInput("variable names")
+               selectInput("data", "Choose a data set", choices = dat_names, selected = "trees"),
+               textOutput("data_info")
              ),
              mainPanel(
-               plotOutput("plotly")
+               uiOutput("variables"),
+               plotOutput("plot")
              )  
            )
   ),
   tabPanel("Tab2",
            sidebarLayout(
              sidebarPanel(
-          
+
              ),
              mainPanel(
                fluidRow(
@@ -36,7 +44,7 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
                         ),
                  column(width = 6,
                         h4("Table title"),
-                        rHandsontableOutput("rhot1")
+                        rHandsontableOutput("rhot2")
                  )
                )
              )
@@ -45,27 +53,3 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
   )
 )
 )
-
-library(mvtnorm)
-
-ui <- fluidPage(
-  sidebarLayout(
-    sidebarPanel(
-      numericInput("n_obs", "Number of Observations", min = 0, value = 10),
-      sliderInput("corr", "Correlation", min = -1, max = 1, step = .1, value = 0)),
-    
-    mainPanel(plotOutput("plot"))
-))
-
-server <- function(input, output){
-  
-  output$plot <- renderPlot({
-    covMat <- diag(2) + matrix(c(0,1,1,0), nrow = 2)*input$corr
-    data <- rmvnorm(input$n_obs, sigma = covMat)
-    
-    plot(data[,1], data[,2], xlab = "x", ylab = "y", main = "")
-  })  
-  
-}
-
-shinyApp(ui, server)
