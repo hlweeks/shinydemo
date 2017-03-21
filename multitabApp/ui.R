@@ -26,12 +26,14 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
                textOutput("data_info"),
                downloadLink("download", "Download as csv")
              ),
+             
              mainPanel(
                uiOutput("variables"),
                plotOutput("plot")
              )  
            )
   ),
+  
   tabPanel("More Things!",
            sidebarLayout(
              sidebarPanel(
@@ -42,6 +44,7 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
                checkboxInput("header", "Header", TRUE),
                actionButton("wait", "Click to wait 5 seconds")
              ),
+             
              mainPanel(
                textOutput("title"),
                tableOutput("summary"),
@@ -50,6 +53,7 @@ shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
            )
 
   ),
+  
   tabPanel("Correlation Example",
            sidebarLayout(
              sidebarPanel(
