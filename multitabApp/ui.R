@@ -4,34 +4,68 @@ library('rhandsontable')
 
 
 shinyUI(navbarPage("R-Ladies Shiny Demo", id = "mainPage",
+  # CSS file from 'www' folder that contains details for formatting, layout                 
   theme = "bootstrap.css",
-  tags$head(tags$style('
-                       nav .container:first-child {
-                       margin-left:10px; width: 100%;
-                       }')),
-  selected = "Basics",
-  tabPanel("Basics",
+  
+  # Makes title area a little smaller than the default
+  tags$head(tags$style('nav .container:first-child {
+                        margin-left:10px; width: 100%;
+                        }')),
+  # Name of the tab that is selected by default
+  selected = "Tab1",
+  tabPanel("Tab1",
            sidebarLayout(
              sidebarPanel(
-               p("Shiny basics"),
-               checkboxInput("manyChickens", "Check box to see all those chickens"),
-               em("(May be incompatible with some browsers.)"),
-               HTML('<br/><br/><br/>'),
-               p("What animals would you like to have on the farm?"),
-               sliderInput("chicken", "Chickens", value = 0, min = 0, max = 10, step = 1),
-               sliderInput("pig", "Pigs", value = 0, min = 0, max = 10, step = 1),
-               sliderInput("cow", "Cows", value = 0, min = 0, max = 10, step = 1),
-               actionButton("goPlot", "Update Plot")
+               #selectInput("variable names")
              ),
              mainPanel(
-               conditionalPanel(
-                 condition = "input.manyChickens == true",
-                 tags$video(src = "allthosechickens.mp4", type = "video/mp4",
-                            width = "350px", height = "350px", controls = "controls")
-               ),
-               plotOutput("animals")
+               plotOutput("plotly")
              )  
            )
+  ),
+  tabPanel("Tab2",
+           sidebarLayout(
+             sidebarPanel(
+          
+             ),
+             mainPanel(
+               fluidRow(
+                 column(width = 6,
+                        h4("Table title"),
+                        rHandsontableOutput("rhot1")
+                        ),
+                 column(width = 6,
+                        h4("Table title"),
+                        rHandsontableOutput("rhot1")
+                 )
+               )
+             )
+           )
+
   )
 )
 )
+
+library(mvtnorm)
+
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      numericInput("n_obs", "Number of Observations", min = 0, value = 10),
+      sliderInput("corr", "Correlation", min = -1, max = 1, step = .1, value = 0)),
+    
+    mainPanel(plotOutput("plot"))
+))
+
+server <- function(input, output){
+  
+  output$plot <- renderPlot({
+    covMat <- diag(2) + matrix(c(0,1,1,0), nrow = 2)*input$corr
+    data <- rmvnorm(input$n_obs, sigma = covMat)
+    
+    plot(data[,1], data[,2], xlab = "x", ylab = "y", main = "")
+  })  
+  
+}
+
+shinyApp(ui, server)
