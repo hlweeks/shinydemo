@@ -1,6 +1,7 @@
 library('shiny')
 library('shinydashboard')
 library('rhandsontable')
+library('mvtnorm')
 
 
 shinyServer(function(input, output) {
